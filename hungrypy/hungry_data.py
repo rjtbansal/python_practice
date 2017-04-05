@@ -3,6 +3,31 @@ import datetime
 import shutil 
 from tempfile import NamedTemporaryFile
 
+def read_data(user_id=None, email=None):
+    filename = "data.csv"
+    with open(filename, "r") as csvfile:
+        reader = csv.DictReader(csvfile) #using dictionary reader to be able to extract data based on keys
+        items = []
+        #keeping track of unknown_user_id and email
+        unknown_user_id = None 
+        unknown_email = None
+        for row in reader:
+            if user_id is not None:
+                if int(user_id) == int(row.get("id")): #getting the id 
+                    return row
+                else:
+                    unknown_user_id = user_id #if not found then assign the user_id to unknown_user_id
+            if email is not None:
+                if email == row.get("email"):
+                    return row
+                else:
+                    unknown_email = email
+        if unknown_user_id is not None:
+            return "User id {user_id} not found".format(user_id=user_id) 
+        if unknown_email is not None:
+            return "Email {email} not found".format(email=email)
+    return None
+
 def get_length(file_path): #for auto increment
     with open("data.csv","r") as csvfile:
         reader = csv.reader(csvfile)
